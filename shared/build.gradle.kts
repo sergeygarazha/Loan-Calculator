@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-var ktor_version: String = "4.12.0"
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -35,18 +33,15 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.logging)
-            implementation("io.ktor:ktor-client-core:${ktor_version}")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
-            implementation("io.ktor:ktor-client-okhttp:${ktor_version}")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation("io.ktor:ktor-client-darwin:${ktor_version}")
         }
     }
 }
