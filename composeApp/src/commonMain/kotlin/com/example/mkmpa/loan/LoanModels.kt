@@ -1,9 +1,8 @@
 package com.example.mkmpa.loan
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlinx.datetime.*
+import kotlin.time.ExperimentalTime
 import kotlin.math.ceil
 
 const val MIN_LOAN_AMOUNT = 5_000
@@ -22,12 +21,15 @@ data class LoanState(
     val totalRepayment: Int
         get() = calculateTotal(amount, interestRate)
 
+    @OptIn(ExperimentalTime::class)
     val returnDateLabel: String
         get() {
-            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-            val returnDate = today + DatePeriod(days = periodDays)
-            val day = returnDate.dayOfMonth.toString().padStart(2, '0')
-            val month = returnDate.monthNumber.toString().padStart(2, '0')
+            val today = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date
+            val returnDate = today.plus(DatePeriod(days = periodDays))
+            val day = returnDate.day.toString().padStart(2, '0')
+            val month = returnDate.month.toString().padStart(2, '0')
             return "$day.$month.${returnDate.year}"
         }
 }
