@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.engine.*
 import io.ktor.client.plugins.logging.Logging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,7 +20,7 @@ actual fun rememberLoanPreferences(): LoanPreferences {
     return remember { AndroidLoanPreferences(context) }
 }
 
-actual fun platformHttpClient(): HttpClient = HttpClient(OkHttp) {
+actual fun platformHttpClient(): HttpClient = HttpClient() {
     install(Logging)
 }
 
