@@ -129,7 +129,6 @@ struct ContentView: View {
                 } label: {
                     if viewModel.isLoading {
                         ProgressView()
-                            .tint(.white)
                     } else {
                         Text("Подать заявку").bold()
                     }
