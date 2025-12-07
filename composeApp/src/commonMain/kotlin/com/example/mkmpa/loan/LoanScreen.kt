@@ -37,15 +37,71 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.alexzhirkevich.cupertino.CupertinoSlider
 import kotlinx.coroutines.CoroutineScope
+import io.github.alexzhirkevich.cupertino.adaptive.*
+import io.github.alexzhirkevich.cupertino.theme.*
+
+@OptIn(ExperimentalAdaptiveApi::class)
+@Composable
+fun AppTheme(
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    theme: Theme = getPlatformTheme1(),
+    content: @Composable () -> Unit
+) {
+    CupertinoTheme(
+        content = content
+    )
+
+//    AdaptiveTheme(
+//        material = {
+//            CupertinoTheme(
+//                content = it
+//            )
+//        },
+//        cupertino = {
+//            CupertinoTheme(
+//                content = it
+//            )
+//        },
+//
+////        material = {
+////            MaterialTheme(
+////                colorScheme = if (useDarkTheme) {
+////                    androidx.compose.material3.darkColorScheme()
+////                } else {
+////                    androidx.compose.material3.lightColorScheme()
+////                },
+////                content = it
+////            )
+////        },
+////        cupertino = {
+////            CupertinoTheme(
+//////                colorScheme = if (useDarkTheme) {
+//////                    darkColorScheme()
+//////                } else {
+//////                    lightColorScheme()
+//////                },
+////                content = it
+////            )
+////
+////        },
+//        target = theme,
+//        content = content
+//    )
+}
+
+expect fun getPlatformTheme(): Theme
+
+fun getPlatformTheme1(): Theme {
+    return Theme.Cupertino
+}
 
 @Composable
 fun LoanCalculatorApp() {
     val colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-    ) {
+    CupertinoTheme() {
         val scope = rememberCoroutineScope()
         val store = rememberLoanStore(scope)
         Surface(modifier = Modifier.fillMaxSize()) {
@@ -81,10 +137,14 @@ fun LoanCalculatorScreen(store: LoanStore) {
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text("Сумма", style = MaterialTheme.typography.titleMedium)
-                AmountSlider(
-                    amount = state.amount,
-                    onAmountChange = { store.dispatch(LoanAction.AmountChanged(it)) }
+                CupertinoSlider(
+                    value = state.amount.toFloat(),
+                    onValueChange = { store.dispatch(LoanAction.AmountChanged(it.toInt())) },
                 )
+//                AmountSlider(
+//                    amount = state.amount,
+//                    onAmountChange = { store.dispatch(LoanAction.AmountChanged(it)) }
+//                )
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(formatAmount(MIN_LOAN_AMOUNT))
                     Text(formatAmount(MAX_LOAN_AMOUNT))

@@ -11,6 +11,3 @@ data class SavedLoan(val amount: Int, val periodDays: Int)
 
 @Composable
 expect fun rememberLoanPreferences(): LoanPreferences
-
-
-
