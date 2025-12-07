@@ -4,4 +4,6 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.example.mkmpa.loan.LoanCalculatorApp
 import platform.UIKit.UIViewController
 
-fun MainViewController(): UIViewController = ComposeUIViewController { LoanCalculatorApp() }
+fun MainIOSViewController(): UIViewController {
+    return ComposeUIViewController { LoanCalculatorApp() }
+}
