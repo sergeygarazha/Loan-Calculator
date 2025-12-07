@@ -4,8 +4,19 @@ private let minAmount = 5_000.0
 private let maxAmount = 50_000.0
 private let periods = [7, 14, 21, 28]
 
+@Observable class LoanViewModel {
+    var amount: Double = 10.0
+    var period: Int = 2
+    var totalRepayment: Double = 100.0
+    var returnDate: String = "Now"
+    var status: String = "Ready"
+    var errorMessage: String?
+    var isLoading: Bool = false
+    func submit() async {}
+}
+
 struct ContentView: View {
-    @StateObject private var viewModel = LoanViewModel()
+    @State private var viewModel = LoanViewModel()
 
     var body: some View {
         NavigationStack {
