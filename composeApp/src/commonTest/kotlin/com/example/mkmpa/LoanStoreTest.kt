@@ -47,3 +47,4 @@ private class FakePreferences : LoanPreferences {
 }
 
 
+
