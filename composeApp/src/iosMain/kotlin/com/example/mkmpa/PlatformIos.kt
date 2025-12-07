@@ -1,13 +1,20 @@
-package com.example.mkmpa.loan
+package com.example.mkmpa
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.example.mkmpa.loan.LoanPreferences
+import com.example.mkmpa.loan.SavedLoan
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.client.plugins.logging.Logging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSUserDefaults
+import io.github.alexzhirkevich.cupertino.adaptive.Theme
+
+actual fun getPlatformTheme(): Theme {
+    return Theme.Cupertino
+}
 
 @Composable
 actual fun rememberLoanPreferences(): LoanPreferences = remember { IosLoanPreferences() }

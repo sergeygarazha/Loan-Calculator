@@ -38,9 +38,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.alexzhirkevich.cupertino.CupertinoSlider
+import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
+import io.github.alexzhirkevich.cupertino.adaptive.Theme
+import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
 import kotlinx.coroutines.CoroutineScope
-import io.github.alexzhirkevich.cupertino.adaptive.*
-import io.github.alexzhirkevich.cupertino.theme.*
 
 @OptIn(ExperimentalAdaptiveApi::class)
 @Composable
