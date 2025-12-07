@@ -3,33 +3,13 @@ package com.example.mkmpa.loan
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,85 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.alexzhirkevich.cupertino.CupertinoSlider
-import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import io.github.alexzhirkevich.cupertino.adaptive.Theme
-import io.github.alexzhirkevich.cupertino.theme.CupertinoTheme
-import kotlinx.coroutines.CoroutineScope
-
-@OptIn(ExperimentalAdaptiveApi::class)
-@Composable
-fun AppTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
-    theme: Theme = getPlatformTheme1(),
-    content: @Composable () -> Unit
-) {
-    CupertinoTheme(
-        content = content
-    )
-
-//    AdaptiveTheme(
-//        material = {
-//            CupertinoTheme(
-//                content = it
-//            )
-//        },
-//        cupertino = {
-//            CupertinoTheme(
-//                content = it
-//            )
-//        },
-//
-////        material = {
-////            MaterialTheme(
-////                colorScheme = if (useDarkTheme) {
-////                    androidx.compose.material3.darkColorScheme()
-////                } else {
-////                    androidx.compose.material3.lightColorScheme()
-////                },
-////                content = it
-////            )
-////        },
-////        cupertino = {
-////            CupertinoTheme(
-//////                colorScheme = if (useDarkTheme) {
-//////                    darkColorScheme()
-//////                } else {
-//////                    lightColorScheme()
-//////                },
-////                content = it
-////            )
-////
-////        },
-//        target = theme,
-//        content = content
-//    )
-}
-
-expect fun getPlatformTheme(): Theme
-
-fun getPlatformTheme1(): Theme {
-    return Theme.Cupertino
-}
-
-@Composable
-fun LoanCalculatorApp() {
-    val colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
-
-    CupertinoTheme() {
-        val scope = rememberCoroutineScope()
-        val store = rememberLoanStore(scope)
-        Surface(modifier = Modifier.fillMaxSize()) {
-            LoanCalculatorScreen(store)
-        }
-    }
-}
-
-@Composable
-private fun rememberLoanStore(scope: CoroutineScope): LoanStore {
-    val preferences = rememberLoanPreferences()
-    val repository = RemoteLoanRepository()
-    return remember(preferences) { LoanStore(repository, preferences, scope) }
-}
 
 @Composable
 fun LoanCalculatorScreen(store: LoanStore) {
@@ -142,10 +43,10 @@ fun LoanCalculatorScreen(store: LoanStore) {
                     value = state.amount.toFloat(),
                     onValueChange = { store.dispatch(LoanAction.AmountChanged(it.toInt())) },
                 )
-//                AmountSlider(
-//                    amount = state.amount,
-//                    onAmountChange = { store.dispatch(LoanAction.AmountChanged(it)) }
-//                )
+                AmountSlider(
+                    amount = state.amount,
+                    onAmountChange = { store.dispatch(LoanAction.AmountChanged(it)) }
+                )
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(formatAmount(MIN_LOAN_AMOUNT))
                     Text(formatAmount(MAX_LOAN_AMOUNT))
@@ -182,12 +83,12 @@ fun LoanCalculatorScreen(store: LoanStore) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.errorContainer)
+                    .background(colorScheme.errorContainer)
                     .padding(12.dp)
             ) {
                 Text(
                     text = state.errorMessage ?: "",
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    color = colorScheme.onErrorContainer
                 )
             }
         }
@@ -198,12 +99,12 @@ fun LoanCalculatorScreen(store: LoanStore) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(colorScheme.primaryContainer)
                     .padding(12.dp)
             ) {
                 Text(
                     text = "Заявка отправлена (#$confirmation)",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = colorScheme.onPrimaryContainer
                 )
             }
         }
@@ -220,7 +121,7 @@ fun LoanCalculatorScreen(store: LoanStore) {
         ) {
             if (state.isLoading) {
                 CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = colorScheme.onPrimary,
                     strokeWidth = 2.dp,
                     modifier = Modifier.height(24.dp)
                 )
@@ -289,7 +190,7 @@ private fun SummaryRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(label, color = colorScheme.onSurfaceVariant)
         Text(value, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.End)
     }
 }
