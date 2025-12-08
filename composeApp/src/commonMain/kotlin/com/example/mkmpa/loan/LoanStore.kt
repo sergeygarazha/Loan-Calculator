@@ -1,6 +1,7 @@
 package com.example.mkmpa.loan
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,6 +47,16 @@ class LoanStore(
             LoanAction.Submit -> submit()
             LoanAction.ClearMessage -> _state.update { it.copy(submissionResult = null, errorMessage = null) }
         }
+    }
+
+    /**
+     * Allows native UI layers (SwiftUI/Jetpack) to observe state changes in a Redux-like way.
+     */
+    fun observeState(onChange: (LoanState) -> Unit): DisposableHandle {
+        val job = scope.launch {
+            state.collect { onChange(it) }
+        }
+        return DisposableHandle { job.cancel() }
     }
 
     private fun handleAmountChange(amount: Int) {

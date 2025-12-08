@@ -5,7 +5,9 @@ import androidx.compose.runtime.remember
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.client.plugins.logging.Logging
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSUserDefaults
 
@@ -15,6 +17,16 @@ actual fun rememberLoanPreferences(): LoanPreferences = remember { IosLoanPrefer
 actual fun platformHttpClient(): HttpClient = HttpClient(Darwin) {
     install(Logging)
 }
+
+fun doNewLoanStore(): LoanStore {
+    return LoanStore(RemoteLoanRepository(), IosLoanPreferences(), MainScope())
+}
+
+fun newLoanStore(
+    scope: CoroutineScope = MainScope(),
+    repository: LoanRepository = RemoteLoanRepository(),
+    preferences: LoanPreferences = IosLoanPreferences()
+): LoanStore = LoanStore(repository, preferences, scope)
 
 private class IosLoanPreferences : LoanPreferences {
     private val defaults = NSUserDefaults.standardUserDefaults

@@ -14,10 +14,11 @@ struct ComposeViewController: UIViewControllerRepresentable {
 
 @main
 struct iOSApp: App {
+    private let store = PlatformIosKt.doNewLoanStore()
+
     var body: some Scene {
         WindowGroup {
-            ComposeViewController()
-                .ignoresSafeArea()
+            ContentView(store: store)
         }
     }
 }
