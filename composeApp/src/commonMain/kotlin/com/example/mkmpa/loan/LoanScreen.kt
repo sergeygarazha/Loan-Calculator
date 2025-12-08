@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.alexzhirkevich.cupertino.CupertinoSlider
 
 @Composable
 fun LoanCalculatorScreen(store: LoanStore) {
@@ -39,10 +38,6 @@ fun LoanCalculatorScreen(store: LoanStore) {
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text("Сумма", style = MaterialTheme.typography.titleMedium)
-                CupertinoSlider(
-                    value = state.amount.toFloat(),
-                    onValueChange = { store.dispatch(LoanAction.AmountChanged(it.toInt())) },
-                )
                 AmountSlider(
                     amount = state.amount,
                     onAmountChange = { store.dispatch(LoanAction.AmountChanged(it)) }
