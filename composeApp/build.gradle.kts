@@ -45,7 +45,6 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.logging)
             implementation(projects.shared)
-            implementation(libs.adaptive.theme)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
