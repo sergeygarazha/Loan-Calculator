@@ -29,8 +29,9 @@ data class LoanState(
                 .date
             val returnDate = today.plus(DatePeriod(days = periodDays))
             val day = returnDate.day.toString().padStart(2, '0')
-            val month = returnDate.month.toString().padStart(2, '0')
-            return "$day.$month.${returnDate.year}"
+            // Use numeric month instead of enum name (FEBRUARY, etc.)
+            val monthNumber = returnDate.monthNumber.toString().padStart(2, '0')
+            return "$day.$monthNumber.${returnDate.year}"
         }
 }
 
