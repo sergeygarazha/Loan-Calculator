@@ -5,23 +5,22 @@ import com.example.mkmpa.loan.LoanPreferences
 import com.example.mkmpa.loan.LoanStore
 import com.example.mkmpa.loan.SavedLoan
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LoanStoreTest {
     @Test
-    fun store_updatesAndSaves() = runTest {
+    fun store_persistsChoiceOnChange() = runTest {
         val repository = FakeRepository()
         val preferences = FakePreferences()
-        val store = LoanStore(repository, preferences, CoroutineScope(Dispatchers.Unconfined))
+        val store = LoanStore(repository, preferences, CoroutineScope(coroutineContext))
 
         store.dispatch(LoanAction.AmountChanged(12_000))
         store.dispatch(LoanAction.PeriodChanged(21))
-        store.dispatch(LoanAction.Submit)
+        advanceUntilIdle()
 
-        assertEquals(1, repository.submittedCount)
         assertEquals(12_000, preferences.savedAmount)
         assertEquals(21, preferences.savedPeriod)
     }

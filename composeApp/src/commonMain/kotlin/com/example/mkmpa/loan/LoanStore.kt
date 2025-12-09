@@ -61,12 +61,24 @@ class LoanStore(
 
     private fun handleAmountChange(amount: Int) {
         if (!isAmountValid(amount)) return
+        val periodDays = _state.value.periodDays
         _state.update { it.copy(amount = amount, submissionResult = null, errorMessage = null) }
+        persistChoice(amount, periodDays)
     }
 
     private fun handlePeriodChange(period: Int) {
         if (!isPeriodValid(period)) return
+        val amount = _state.value.amount
         _state.update { it.copy(periodDays = period, submissionResult = null, errorMessage = null) }
+        persistChoice(amount, period)
+    }
+
+    private fun persistChoice(amount: Int, periodDays: Int) {
+        scope.launch {
+            runCatching {
+                preferences.save(amount, periodDays)
+            }
+        }
     }
 
     private fun submit() {
