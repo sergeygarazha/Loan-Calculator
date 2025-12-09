@@ -1,7 +1,11 @@
 MKMPA – Compose Multiplatform Loan Calculator
 =============================================
 
-A Kotlin Multiplatform sample that calculates short-term loan terms and submits an application via a mock API. UI is built with Compose Multiplatform and runs on Android, iOS, Desktop (JVM), and Web (Wasm/JS).
+A Kotlin Multiplatform sample that calculates short-term loan terms and submits an application via a mock API.
+
+<img width="300" src="https://github.com/user-attachments/assets/e2ab8f79-943e-4c14-a562-a2366643a147" />
+<img width="300" src="https://github.com/user-attachments/assets/c5e22ad7-3283-41cb-9d03-de6d876ee1f4" />
+
 
 Features
 --------
