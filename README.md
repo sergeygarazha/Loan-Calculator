@@ -1,95 +1,72 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM), Server.
+MKMPA – Compose Multiplatform Loan Calculator
+=============================================
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A Kotlin Multiplatform sample that calculates short-term loan terms and submits an application via a mock API. UI is built with Compose Multiplatform and runs on Android, iOS, Desktop (JVM), and Web (Wasm/JS).
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Features
+--------
+- Loan calculator with sliders for amount (5,000–50,000 USD) and period (7/14/21/28 days).
+- Live repayment summary with total due, return date, and interest breakdown.
+- Form persistence: last selected amount/period is restored on next launch.
+- Submission flow with loading state, success/error banners, and mocked backend (`jsonplaceholder.typicode.com/posts`).
+- Light and dark theme support (Material 3).
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+Project layout
+--------------
+- `composeApp/` – shared Compose UI and platform entry points.
+  - `commonMain/` – UI, state, reducers, repository contracts.
+  - `androidMain/`, `iosMain/` – platform-specific clients/preferences.
+- `shared/` – additional KMP sources used across targets.
+- `iosApp/` – SwiftUI host for iOS builds.
+- `docs/media/` – place release-ready screenshots/video captures (see below).
 
-* [/shared](./shared/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./shared/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+Prerequisites
+-------------
+- JDK 17+ on macOS/Linux/Windows.
+- Android Studio Ladybug+ with Android SDK & emulator for Android builds.
+- Xcode 15+ with a simulator for iOS builds.
+- Recent Node-capable browser for Web (Wasm/JS).
 
-### Build and Run Android Application
+Build & run
+-----------
+Android
+- Start an emulator or connect a device.
+- `./gradlew :composeApp:assembleDebug` to build.
+- `./gradlew :composeApp:installDebug` to deploy to the active device.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+Desktop (JVM)
+- `./gradlew :composeApp:run`
 
-### Build and Run Desktop (JVM) Application
+Web
+- Wasm (recommended): `./gradlew :composeApp:wasmJsBrowserDevelopmentRun`
+- JS (legacy browsers): `./gradlew :composeApp:jsBrowserDevelopmentRun`
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+iOS
+- `./gradlew :composeApp:syncFramework` (first run) to generate the KMP framework.
+- Open `iosApp/iosApp.xcodeproj` in Xcode and run on a simulator or device.
 
-### Build and Run Server
+Testing & quality
+-----------------
+- `./gradlew check` runs available multiplatform checks.
+- Connected tests are not set up; Android/iOS UI is covered manually via the flows above.
 
-To build and run the development version of the server, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :server:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :server:run
-  ```
+Data & networking
+-----------------
+- Loan submissions POST to `https://jsonplaceholder.typicode.com/posts` (mock). No secrets or config files are required.
 
-### Build and Run Web Application
+Light/Dark media (handoff requirement)
+--------------------------------------
+- Capture light and dark theme screenshots or a short screen recording of the loan calculator.
+- Save assets to `docs/media/` using these names so links stay stable:
+  - `docs/media/loan-calculator-light.png`
+  - `docs/media/loan-calculator-dark.png`
+  - Optional video: `docs/media/loan-calculator-demo.mp4`
+- How to capture:
+  - Android: run the Debug build, use `adb exec-out screencap -p > docs/media/loan-calculator-light.png`, then enable dark theme in quick settings and repeat.
+  - iOS: run from Xcode, `xcrun simctl io booted screenshot docs/media/loan-calculator-light.png`; toggle Appearance to Dark in the simulator and repeat.
+  - Desktop/Web: use built-in OS screenshot tooling and place files in the same folder.
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
-
-### Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
-
----
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
-
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+Troubleshooting
+---------------
+- Gradle daemon memory issues: set `ORG_GRADLE_OPTS="-Xmx4g"` or edit `gradle.properties`.
+- Cached state looks stale: clear `~/.gradle/caches` and rerun the Gradle task.
