@@ -6,7 +6,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoanStore(
@@ -27,26 +26,12 @@ class LoanStore(
     }
 
     fun dispatch(action: LoanAction) {
-        when (action) {
-            is LoanAction.AmountChanged -> handleAmountChange(action.amount)
-            is LoanAction.PeriodChanged -> handlePeriodChange(action.periodDays)
-            is LoanAction.RestoreSaved -> _state.update {
-                it.copy(
-                    amount = action.amount.coerceIn(MIN_LOAN_AMOUNT, MAX_LOAN_AMOUNT),
-                    periodDays = if (isPeriodValid(action.periodDays)) action.periodDays else LOAN_PERIOD_OPTIONS.first(),
-                    submissionResult = null,
-                    errorMessage = null
-                )
-            }
-            is LoanAction.Submitted -> _state.update {
-                it.copy(isLoading = false, submissionResult = SubmissionResult.Success(action.confirmationId), errorMessage = null)
-            }
-            is LoanAction.SubmitFailed -> _state.update {
-                it.copy(isLoading = false, submissionResult = SubmissionResult.Error(action.message), errorMessage = action.message)
-            }
-            LoanAction.Submit -> submit()
-            LoanAction.ClearMessage -> _state.update { it.copy(submissionResult = null, errorMessage = null) }
+        val currentState = _state.value
+        val result = LoanReducer.reduce(currentState, action)
+        if (result.state != currentState) {
+            _state.value = result.state
         }
+        handleEffects(result.effects)
     }
 
     /**
@@ -59,18 +44,13 @@ class LoanStore(
         return DisposableHandle { job.cancel() }
     }
 
-    private fun handleAmountChange(amount: Int) {
-        if (!isAmountValid(amount)) return
-        val periodDays = _state.value.periodDays
-        _state.update { it.copy(amount = amount, submissionResult = null, errorMessage = null) }
-        persistChoice(amount, periodDays)
-    }
-
-    private fun handlePeriodChange(period: Int) {
-        if (!isPeriodValid(period)) return
-        val amount = _state.value.amount
-        _state.update { it.copy(periodDays = period, submissionResult = null, errorMessage = null) }
-        persistChoice(amount, period)
+    private fun handleEffects(effects: List<LoanEffect>) {
+        effects.forEach { effect ->
+            when (effect) {
+                is LoanEffect.PersistChoice -> persistChoice(effect.amount, effect.periodDays)
+                is LoanEffect.SubmitLoan -> submitLoan(effect)
+            }
+        }
     }
 
     private fun persistChoice(amount: Int, periodDays: Int) {
@@ -81,21 +61,13 @@ class LoanStore(
         }
     }
 
-    private fun submit() {
-        val snapshot = _state.value
-        if (!isAmountValid(snapshot.amount) || !isPeriodValid(snapshot.periodDays) || snapshot.isLoading) {
-            _state.update { it.copy(errorMessage = "Введите корректные значения") }
-            return
-        }
-
+    private fun submitLoan(effect: LoanEffect.SubmitLoan) {
         activeJob?.cancel()
-        _state.update { it.copy(isLoading = true, errorMessage = null, submissionResult = null) }
-
         activeJob = scope.launch {
             runCatching {
-                repository.submitLoan(snapshot.amount, snapshot.periodDays, snapshot.totalRepayment)
+                repository.submitLoan(effect.amount, effect.periodDays, effect.totalRepayment)
             }.onSuccess { confirmation ->
-                preferences.save(snapshot.amount, snapshot.periodDays)
+                preferences.save(effect.amount, effect.periodDays)
                 dispatch(LoanAction.Submitted(confirmation))
             }.onFailure { error ->
                 dispatch(LoanAction.SubmitFailed(error.message ?: "Не удалось отправить заявку"))
